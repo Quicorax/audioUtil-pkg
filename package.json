@@ -1,0 +1,16 @@
+{
+  "name": "es.quicorax.audioutil",
+  "version": "0.5.0",
+  "displayName": "Audio Utility Package",
+  "description": "Audio management Utility tools",
+  "unity": "2021.3",
+  "unityRelease": "0f1",
+  "keywords": [
+    "utils, audio"
+  ],
+  "author": {
+    "name": "quicorax",
+    "email": "qcolobrans@gmail.com",
+    "url": "https://github.com/Quicorax/audioUtil-pkg.git"
+  }
+}
