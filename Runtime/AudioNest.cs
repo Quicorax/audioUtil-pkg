@@ -34,13 +34,13 @@ namespace AudioUtil.Runtime
         {
             if (!_audioDefinitions.SerializedAudios.ContainsKey(clipKey))
             {
-                Debug.LogError($"Audio With Key {clipKey} is not present in the AudioDefinitions");
+                Debug.LogError($"Audio with key {clipKey} is not present in the AudioDefinitions");
                 return;
             }
 
             if (loop && _activeLoopingAudios.Contains(clipKey))
             {
-                Debug.LogError($"Audio With Key {clipKey} is already been played in loop mode");
+                Debug.LogError($"Audio with key {clipKey} is already been played in loop mode");
                 return;
             }
 
