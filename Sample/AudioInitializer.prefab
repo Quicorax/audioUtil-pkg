@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8187559265967300205}
   - component: {fileID: 8187559265967300204}
+  - component: {fileID: 3967426370381926110}
   m_Layer: 0
   m_Name: AudioInitializer
   m_TagString: Untagged
@@ -48,3 +49,11 @@ MonoBehaviour:
   _audioMixer: {fileID: 24100000, guid: dd8e461ab5ed53d4f82fd05d471507c6, type: 2}
   _musicMixer: {fileID: 2791643471131540634, guid: dd8e461ab5ed53d4f82fd05d471507c6, type: 2}
   _sfxMixer: {fileID: 6983445156383219108, guid: dd8e461ab5ed53d4f82fd05d471507c6, type: 2}
+--- !u!81 &3967426370381926110
+AudioListener:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8187559265967300203}
+  m_Enabled: 1
