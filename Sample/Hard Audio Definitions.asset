@@ -9,11 +9,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f47fe0d9ab5e424b88c21f8260dcadce, type: 3}
+  m_Script: {fileID: 11500000, guid: ac9d645640a70584a863b3ac6c1a00fe, type: 3}
   m_Name: Hard Audio Definitions
   m_EditorClassIdentifier: 
   Audios:
   - AudioKey: Music
-    AudioFile: {fileID: 8300000, guid: a721e21b48a132c4a8a982ff981441dd, type: 3}
+    AudioFile: {fileID: 8300000, guid: 01344d1966c24e842a914ac58c807f17, type: 3}
   - AudioKey: Hit
-    AudioFile: {fileID: 8300000, guid: c540041544adbd34b8591875d2a2b312, type: 3}
+    AudioFile: {fileID: 8300000, guid: 822e44ab55d48214ab19ed0cbd5ed315, type: 3}

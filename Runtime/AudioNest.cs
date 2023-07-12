@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -8,14 +7,18 @@ namespace AudioUtil.Runtime
 {
     public class AudioNest : MonoBehaviour
     {
+        private const int MaxAudioSources = 100;
+
         public VolumeManager Volume;
-        
+
         private AudioDefinitions _audioDefinitions;
         private AudioMixerGroup _musicMixer;
         private AudioMixerGroup _sfxMixer;
 
         private readonly List<string> _activeLoopingAudios = new();
         private readonly List<AudioSource> _activeAudioSources = new();
+        
+        private int _instancedAudioSources;
 
         public AudioNest Initialize(AudioDefinitions audioDefinitions, AudioMixer audioMixer,
             AudioMixerGroup musicMixer, AudioMixerGroup sfxMixer)
@@ -52,6 +55,11 @@ namespace AudioUtil.Runtime
             var audioSource = transform.GetComponentsInChildren<AudioSource>()
                 .FirstOrDefault(source => !source.isPlaying) ?? CreateNewAudioSourceChildren();
 
+            if (audioSource is null)
+            {
+                return;
+            }
+
             AudioMixerGroup mixerToAssign;
             if (loop)
             {
@@ -69,10 +77,17 @@ namespace AudioUtil.Runtime
 
             audioSource.Play();
         }
-
+        
         private AudioSource CreateNewAudioSourceChildren()
         {
+            if (_instancedAudioSources >= MaxAudioSources)
+            {
+                return null;
+            }
+
             var newAudioSource = new GameObject().AddComponent<AudioSource>();
+            _instancedAudioSources++;
+
             newAudioSource.name = "AudioSource";
             newAudioSource.transform.parent = transform;
             newAudioSource.playOnAwake = false;
@@ -90,6 +105,8 @@ namespace AudioUtil.Runtime
             {
                 Destroy(transform.GetChild(index).gameObject);
             }
+
+            _instancedAudioSources = 0;
         }
 
         private void Awake() => DontDestroyOnLoad(gameObject);

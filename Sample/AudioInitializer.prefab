@@ -42,13 +42,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 8187559265967300203}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 77ee629cfc923a74bbeb1f5459fabf2e, type: 3}
+  m_Script: {fileID: 11500000, guid: cb2fb88b0cfd1cd4b85138060667dc96, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _audioDefinitions: {fileID: 11400000, guid: fde6aa3fd43d2c647a0a5797de9c4ec2, type: 2}
-  _audioMixer: {fileID: 24100000, guid: dd8e461ab5ed53d4f82fd05d471507c6, type: 2}
-  _musicMixer: {fileID: 2791643471131540634, guid: dd8e461ab5ed53d4f82fd05d471507c6, type: 2}
-  _sfxMixer: {fileID: 6983445156383219108, guid: dd8e461ab5ed53d4f82fd05d471507c6, type: 2}
+  _audioDefinitions: {fileID: 11400000, guid: 4d975c1647b517b4b8d14747df7a0477, type: 2}
+  _audioMixer: {fileID: 24100000, guid: ebc0e2c4227e77541980694baaf69459, type: 2}
+  _musicMixer: {fileID: 2791643471131540634, guid: ebc0e2c4227e77541980694baaf69459, type: 2}
+  _sfxMixer: {fileID: 6983445156383219108, guid: ebc0e2c4227e77541980694baaf69459, type: 2}
 --- !u!81 &3967426370381926110
 AudioListener:
   m_ObjectHideFlags: 0
