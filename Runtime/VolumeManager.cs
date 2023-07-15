@@ -3,67 +3,53 @@ using UnityEngine.Audio;
 
 namespace AudioUtil.Runtime
 {
-   
     public class VolumeManager
     {
         public class AudioActions : IVolumeActions
         {
             private readonly AudioMixer _audioMixer;
-            
+
             public AudioActions(AudioMixer audioMixer)
             {
                 _audioMixer = audioMixer;
             }
-            
-            public void AddMusicVolume(float additiveValue)
+
+            public void AddMasterVolume(float additiveValue) => AddVolume(additiveValue, "Master");
+            public void AddMusicVolume(float additiveValue) => AddVolume(additiveValue, "Music");
+            public void AddSFXVolume(float additiveValue) => AddVolume(additiveValue, "SFX");
+
+            public void MuteMaster() => MuteChannel("Master");
+            public void MuteMusic() => MuteChannel("Music");
+            public void MuteSFX() => MuteChannel("SFX");
+
+            private void AddVolume(float additiveValue, string conceptKey)
             {
-                if (PlayerPrefs.GetInt(AudioCommonConsts.MusicMuted) == 1)
+                GenerateKeys(conceptKey, out var volumeKey, out var mutedKey, out var savedVolumeKey);
+
+                if (PlayerPrefs.GetInt(mutedKey) == 1)
                 {
                     return;
                 }
-            
-                var actualMusicVolume = PlayerPrefs.GetFloat(AudioCommonConsts.SavedMusicVolume) + additiveValue;
 
-                _audioMixer.SetFloat("MusicVolume", actualMusicVolume);
-            
-                PlayerPrefs.SetFloat(AudioCommonConsts.SavedMusicVolume, actualMusicVolume);
+                var actualMasterVolume = PlayerPrefs.GetFloat(savedVolumeKey) + additiveValue;
+                _audioMixer.SetFloat(volumeKey, actualMasterVolume);
+
+                PlayerPrefs.SetFloat(savedVolumeKey, actualMasterVolume);
             }
 
-            public void AddSFXVolume(float additiveValue)
+            private void MuteChannel(string conceptKey)
             {
-                if (PlayerPrefs.GetInt(AudioCommonConsts.SFXMuted) == 1)
-                {
-                    return;
-                }
-            
-                var actualSfxVolume = PlayerPrefs.GetFloat(AudioCommonConsts.SavedSFXVolume) + additiveValue;
+                GenerateKeys(conceptKey, out var volumeKey, out var mutedKey, out var savedVolumeKey);
 
-                _audioMixer.SetFloat("SFXVolume", actualSfxVolume);
-            
-                PlayerPrefs.SetFloat(AudioCommonConsts.SavedSFXVolume, actualSfxVolume);
-            }
+                var isMuted = PlayerPrefs.GetInt(mutedKey) == 1;
 
-            public void MuteMusic()
-            {
-                var muted = PlayerPrefs.GetInt(AudioCommonConsts.MusicMuted) == 1;
+                _audioMixer.SetFloat(volumeKey,
+                    isMuted ? PlayerPrefs.GetFloat(savedVolumeKey) : AudioCommonConsts.MutedAudioValue);
 
-                _audioMixer.SetFloat("MusicVolume",
-                    muted ? PlayerPrefs.GetFloat(AudioCommonConsts.SavedMusicVolume) : AudioCommonConsts.MutedAudioValue);
-
-                PlayerPrefs.SetInt(AudioCommonConsts.MusicMuted, muted ? 0 : 1);
-            }
-
-            public void MuteSFX()
-            {
-                var muted = PlayerPrefs.GetInt(AudioCommonConsts.SFXMuted) == 1;
-
-                _audioMixer.SetFloat("SFXVolume",
-                    muted ? PlayerPrefs.GetFloat(AudioCommonConsts.SavedSFXVolume) : AudioCommonConsts.MutedAudioValue);
-
-                PlayerPrefs.SetInt(AudioCommonConsts.SFXMuted, muted ? 0 : 1);
+                PlayerPrefs.SetInt(mutedKey, isMuted ? 0 : 1);
             }
         }
-        
+
         public readonly AudioActions Do;
         private readonly AudioMixer _audioMixer;
 
@@ -72,18 +58,30 @@ namespace AudioUtil.Runtime
             _audioMixer = audioMixer;
             Do = new AudioActions(audioMixer);
         }
-        
+
         public void ConfigureInitialVolume()
         {
-            _audioMixer.SetFloat("SFXVolume",
-                PlayerPrefs.GetInt(AudioCommonConsts.SFXMuted) == 0
-                    ? PlayerPrefs.GetFloat(AudioCommonConsts.SavedSFXVolume)
-                    : AudioCommonConsts.MutedAudioValue);
+            ConfigureChannelVolume("Master");
+            ConfigureChannelVolume("Music");
+            ConfigureChannelVolume("SFX");
+        }
 
-            _audioMixer.SetFloat("MusicVolume",
-                PlayerPrefs.GetInt(AudioCommonConsts.MusicMuted) == 0
-                    ? PlayerPrefs.GetFloat(AudioCommonConsts.SavedMusicVolume)
+        private void ConfigureChannelVolume(string conceptKey)
+        {
+            GenerateKeys(conceptKey, out var volumeKey, out var mutedKey, out var savedVolumeKey);
+
+            _audioMixer.SetFloat(volumeKey,
+                PlayerPrefs.GetInt(mutedKey) == 0
+                    ? PlayerPrefs.GetFloat(savedVolumeKey)
                     : AudioCommonConsts.MutedAudioValue);
+        }
+
+        private static void GenerateKeys(string conceptKey, 
+            out string volumeKey, out string mutedKey, out string savedVolumeKey)
+        {
+            volumeKey = string.Concat(conceptKey, "Volume");
+            mutedKey = string.Concat(conceptKey, "Muted");
+            savedVolumeKey = string.Concat("Saved", volumeKey);
         }
     }
 }
