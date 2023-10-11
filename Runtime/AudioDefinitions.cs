@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace AudioUtil.Runtime
+namespace Services.Runtime.AudioService
 {
     [CreateAssetMenu(menuName = "Quicorax/AudioUtil/HardAudioDefinitions", fileName = "Hard Audio Definitions")]
     public class AudioDefinitions : ScriptableObject
@@ -13,18 +13,16 @@ namespace AudioUtil.Runtime
             public string AudioKey;
             public AudioClip AudioFile;
         }
-    
+
         public List<AudioDefinition> Audios = new();
         public readonly Dictionary<string, AudioClip> SerializedAudios = new();
-        
-        public AudioDefinitions Serialize()
+
+        public void Initialize()
         {
             foreach (var audioDefinition in Audios)
             {
                 SerializedAudios.Add(audioDefinition.AudioKey, audioDefinition.AudioFile);
             }
-
-            return this;
         }
     }
 }

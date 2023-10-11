@@ -5,7 +5,7 @@ using DG.Tweening;
 using UnityEngine;
 using UnityEngine.Audio;
 
-namespace AudioUtil.Runtime
+namespace Services.Runtime.AudioService
 {
     public class AudioNest : MonoBehaviour
     {
@@ -22,16 +22,16 @@ namespace AudioUtil.Runtime
         private int _instancedAudioSources;
         private Tween _fadeTween;
 
-        public AudioNest Initialize(AudioDefinitions audioDefinitions, AudioMixer audioMixer,
-            AudioMixerGroup musicMixer, AudioMixerGroup sfxMixer)
+        public AudioNest Initialize(AudioDependencies data)
         {
-            Volume = new VolumeManager(audioMixer);
+            Volume = new VolumeManager(data.AudioMixer);
+            _musicMixer = data.MusicMixer;
+            _sfxMixer = data.SFXMixer;
+            _audioDefinitions = data.AudioDefinitions;
 
-            _audioDefinitions = audioDefinitions;
-            _musicMixer = musicMixer;
-            _sfxMixer = sfxMixer;
-
+            _audioDefinitions.Initialize();
             gameObject.name = "AudioManager";
+
             return this;
         }
 
@@ -43,7 +43,7 @@ namespace AudioUtil.Runtime
             }
 
             var audioSource = SetUpAudioSource(false, clipKey, _sfxMixer);
-            audioSource?.Play();
+            audioSource.Play();
         }
 
         public void PlayMusic(string clipKey)
@@ -75,17 +75,16 @@ namespace AudioUtil.Runtime
 
             return false;
         }
-        
+
         private bool MusicClipAlreadyPlaying(string clipKey)
         {
             if (!_activeMusics.ContainsKey(clipKey))
             {
                 return false;
             }
-            
+
             Debug.LogError($"Audio with key {clipKey} is already been played in loop mode");
             return true;
-
         }
 
         public void StopAllMusics(float fadeTime)
@@ -120,8 +119,9 @@ namespace AudioUtil.Runtime
             }
         }
 
-        public void Clear()
+        public void ClearAudio()
         {
+            _fadeTween?.Kill();
             _activeMusics.Clear();
 
             for (var index = 0; index < transform.childCount; index++)
@@ -174,10 +174,6 @@ namespace AudioUtil.Runtime
 
         private void Awake() => DontDestroyOnLoad(gameObject);
         private void Start() => Volume.ConfigureInitialVolume();
-
-        private void OnDestroy()
-        {
-            _fadeTween.Kill();
-        }
+        private void OnDestroy() => _fadeTween.Kill();
     }
 }
