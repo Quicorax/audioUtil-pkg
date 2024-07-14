@@ -13,6 +13,8 @@ namespace Services.Runtime.AudioService
         void SetSFXVolume(float finalVolume);
         void MuteMusic(bool mute);
         void MuteSFX(bool mute);
+        bool ToggleMuteMusic();
+        bool ToggleMuteSFX();
         void ClearAudio();
     }
 }

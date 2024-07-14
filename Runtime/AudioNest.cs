@@ -17,6 +17,9 @@ namespace Services.Runtime.AudioService
         private int _instancedAudioSources;
         private Tween _fadeTween;
 
+        private bool _isMusicMuted;
+        private bool _isSfxMuted;
+
         public AudioNest Initialize(AudioDefinitions audioDefinitions)
         {
             _audioDefinitions = audioDefinitions;
@@ -38,7 +41,7 @@ namespace Services.Runtime.AudioService
 
             audioSource.volume = PlayerPrefs.GetFloat("SFXVolume");
             audioSource.mute = PlayerPrefs.GetInt("SFXMuted") == 1;
-            
+
             audioSource.Play();
         }
 
@@ -136,6 +139,22 @@ namespace Services.Runtime.AudioService
             PlayerPrefs.SetInt("SFXMuted", mute ? 1 : 0);
         }
 
+        public bool ToggleMuteMusic()
+        {
+            _isMusicMuted = !_isMusicMuted;
+
+            MuteMusic(_isMusicMuted);
+            return _isMusicMuted;
+        }
+
+        public bool ToggleMuteSFX()
+        {
+            _isSfxMuted = !_isSfxMuted;
+
+            MuteSFX(_isSfxMuted);
+            return _isSfxMuted;
+        }
+
         public void ClearAudio()
         {
             _fadeTween?.Kill();
@@ -211,8 +230,13 @@ namespace Services.Runtime.AudioService
             return true;
         }
 
-        private void SetInitialVolume()
+        private void SetInitialState()
         {
+            _isMusicMuted = PlayerPrefs.GetInt("MusicMuted") == 1;
+            _isSfxMuted = PlayerPrefs.GetInt("SFXMuted") == 1;
+            MuteMusic(_isMusicMuted);
+            MuteSFX(_isSfxMuted);
+
             if (PlayerPrefs.GetInt("InitialSFXVolumeSet") == 0)
             {
                 PlayerPrefs.SetInt("InitialSFXVolumeSet", 1);
@@ -240,7 +264,7 @@ namespace Services.Runtime.AudioService
         }
 
         private void Awake() => DontDestroyOnLoad(gameObject);
-        private void Start() => SetInitialVolume();
+        private void Start() => SetInitialState();
         private void OnDestroy() => _fadeTween.Kill();
     }
 }
