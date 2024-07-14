@@ -38,6 +38,8 @@ namespace Services.Runtime.AudioService
             var audioSource = SetUpAudioSource(false, clipKey);
 
             audioSource.volume = PlayerPrefs.GetFloat("SFXVolume");
+            audioSource.mute = PlayerPrefs.GetInt("SFXMuted") == 1;
+            
             audioSource.Play();
         }
 
@@ -58,6 +60,8 @@ namespace Services.Runtime.AudioService
             _activeMusics.Add(clipKey, audioSource);
 
             audioSource.volume = PlayerPrefs.GetFloat("MusicVolume");
+            audioSource.mute = PlayerPrefs.GetInt("MusicMuted") == 1;
+
             audioSource.Play();
         }
 
@@ -187,6 +191,7 @@ namespace Services.Runtime.AudioService
 
         private void ResetAudioSource(string clipKey, AudioSource audioSource)
         {
+            audioSource.mute = false;
             audioSource.clip = null;
             audioSource.volume = 1f;
 
