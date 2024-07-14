@@ -123,7 +123,7 @@ namespace Services.Runtime.AudioService
                 musicAudioSource.mute = mute;
             }
 
-            PlayerPrefs.SetInt("MusicMuted", mute ? 0 : 1);
+            PlayerPrefs.SetInt("MusicMuted", mute ? 1 : 0);
         }
 
         public void MuteSFX(bool mute)
