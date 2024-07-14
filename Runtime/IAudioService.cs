@@ -9,9 +9,8 @@ namespace Services.Runtime.AudioService
         void StopMusic(string musicKey, float fadeTime = 0, Action onComplete = null);
         void TransitionMusic(string fromMusicKey, string toMusicKey, float fadeTime = 0);
         void StopAllMusics(float fadeTime);
-        void AddMasterVolume(float additiveValue);
-        void AddMusicVolume(float additiveValue);
-        void AddSFXVolume(float additiveValue);
+        void AddMusicVolume(float finalVolume);
+        void AddSFXVolume(float finalVolume);
         bool MuteMaster();
         bool MuteMusic();
         bool MuteSFX();

@@ -21,9 +21,8 @@ namespace Services.Runtime.AudioService
         public void StopMusic(string musicKey, float fadeTime = 0, Action onComplete = null) => IsReady(()=> _audioNest.StopMusic(musicKey, fadeTime, onComplete));
         public void TransitionMusic(string fromMusicKey, string toMusicKey, float fadeTime = 0) => IsReady(()=> _audioNest.StopMusic(fromMusicKey, fadeTime, () => PlayMusic(toMusicKey)));
         public void StopAllMusics(float fadeTime) => IsReady(()=> _audioNest.StopAllMusics(fadeTime));
-        public void AddMasterVolume(float additiveValue) => IsReady(()=> _audioNest.Volume.AddMasterVolume(additiveValue));
-        public void AddMusicVolume(float additiveValue) => IsReady(()=> _audioNest.Volume.AddMusicVolume(additiveValue));
-        public void AddSFXVolume(float additiveValue) => IsReady(()=> _audioNest.Volume.AddSFXVolume(additiveValue));
+        public void AddMusicVolume(float finalVolume) => IsReady(()=> _audioNest.SetMusicVolume(finalVolume));
+        public void AddSFXVolume(float finalVolume) => IsReady(()=> _audioNest.SetSFXVolume(finalVolume));
         public void ClearAudio() => IsReady(()=> _audioNest.ClearAudio());
         public bool MuteMaster() => IsReady(() => _audioNest.Volume.MuteMaster());
         public bool MuteMusic() => IsReady(() => _audioNest.Volume.MuteMusic());

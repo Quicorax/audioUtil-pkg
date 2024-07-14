@@ -43,6 +43,8 @@ namespace Services.Runtime.AudioService
             }
 
             var audioSource = SetUpAudioSource(false, clipKey, _sfxMixer);
+            
+            audioSource.volume = PlayerPrefs.GetFloat("SFXVolume");
             audioSource.Play();
         }
 
@@ -62,29 +64,28 @@ namespace Services.Runtime.AudioService
 
             _activeMusics.Add(clipKey, audioSource);
 
+            audioSource.volume = PlayerPrefs.GetFloat("MusicVolume");
             audioSource.Play();
         }
 
-        private bool ClipNotFound(string clipKey)
+        public void SetSFXVolume(float volume)
         {
-            if (!_audioDefinitions.SerializedAudios.ContainsKey(clipKey))
+            foreach (var sfxAudioSource in transform.GetComponentsInChildren<AudioSource>().Where(x => !x.loop))
             {
-                Debug.LogError($"Audio with key {clipKey} is not present in the AudioDefinitions");
-                return true;
+                sfxAudioSource.volume = volume;
             }
-
-            return false;
+            
+            PlayerPrefs.SetFloat("SFXVolume", volume);
         }
 
-        private bool MusicClipAlreadyPlaying(string clipKey)
+        public void SetMusicVolume(float volume)
         {
-            if (!_activeMusics.ContainsKey(clipKey))
+            foreach (var musicAudioSource in _activeMusics.Values)
             {
-                return false;
+                musicAudioSource.volume = volume;
             }
-
-            Debug.LogError($"Audio with key {clipKey} is already been played in loop mode");
-            return true;
+            
+            PlayerPrefs.SetFloat("MusicVolume", volume);
         }
 
         public void StopAllMusics(float fadeTime)
@@ -170,6 +171,28 @@ namespace Services.Runtime.AudioService
             audioSource.volume = 1f;
 
             _activeMusics.Remove(clipKey);
+        }
+
+        private bool ClipNotFound(string clipKey)
+        {
+            if (!_audioDefinitions.SerializedAudios.ContainsKey(clipKey))
+            {
+                Debug.LogError($"Audio with key {clipKey} is not present in the AudioDefinitions");
+                return true;
+            }
+
+            return false;
+        }
+
+        private bool MusicClipAlreadyPlaying(string clipKey)
+        {
+            if (!_activeMusics.ContainsKey(clipKey))
+            {
+                return false;
+            }
+
+            Debug.LogError($"Audio with key {clipKey} is already been played in loop mode");
+            return true;
         }
 
         private void Awake() => DontDestroyOnLoad(gameObject);

@@ -15,10 +15,7 @@ namespace Services.Runtime.AudioService
         {
             _audioMixer = audioMixer;
         }
-
-        public void AddMasterVolume(float additiveValue) => AddVolume(additiveValue, Master);
-        public void AddMusicVolume(float additiveValue) => AddVolume(additiveValue, Music);
-        public void AddSFXVolume(float additiveValue) => AddVolume(additiveValue, SFX);
+        
         public bool MuteMaster() => MuteChannel(Master);
         public bool MuteMusic() => MuteChannel(Music);
         public bool MuteSFX() => MuteChannel(SFX);
@@ -28,21 +25,6 @@ namespace Services.Runtime.AudioService
             ConfigureChannelVolume(Master);
             ConfigureChannelVolume(Music);
             ConfigureChannelVolume(SFX);
-        }
-
-        private void AddVolume(float additiveValue, string conceptKey)
-        {
-            GenerateKeys(conceptKey, out var volumeKey, out var mutedKey, out var savedVolumeKey);
-
-            if (PlayerPrefs.GetInt(mutedKey) == 1)
-            {
-                return;
-            }
-
-            var actualMasterVolume = PlayerPrefs.GetFloat(savedVolumeKey) + additiveValue;
-            _audioMixer.SetFloat(volumeKey, actualMasterVolume);
-
-            PlayerPrefs.SetFloat(savedVolumeKey, actualMasterVolume);
         }
 
         private bool MuteChannel(string conceptKey)
