@@ -222,9 +222,6 @@ namespace Services.Runtime.AudioService
 
         private void SetInitialVolume()
         {
-            MuteMusic();
-            MuteSFX();
-            
             if (PlayerPrefs.GetInt("InitialSFXVolumeSet") == 0)
             {
                 PlayerPrefs.SetInt("InitialSFXVolumeSet", 1);
