@@ -24,8 +24,8 @@ namespace Services.Runtime.AudioService
         public void SetMusicVolume(float finalVolume) => IsReady(()=> _audioNest.SetMusicVolume(finalVolume));
         public void SetSFXVolume(float finalVolume) => IsReady(()=> _audioNest.SetSFXVolume(finalVolume));
         public void ClearAudio() => IsReady(()=> _audioNest.ClearAudio());
-        public bool MuteMusic() => IsReady(() => _audioNest.MuteMusic());
-        public bool MuteSFX() => IsReady(() => _audioNest.MuteSFX());
+        public void MuteMusic(bool mute) => IsReady(() => _audioNest.MuteMusic(mute));
+        public void MuteSFX(bool mute) => IsReady(() => _audioNest.MuteSFX(mute));
     
         private void SetDependencies(ResourceRequest asset)
         {

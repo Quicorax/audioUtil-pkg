@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using DG.Tweening;
 using UnityEngine;
-using UnityEngine.Audio;
 
 namespace Services.Runtime.AudioService
 {
@@ -117,32 +116,24 @@ namespace Services.Runtime.AudioService
             }
         }
 
-        public bool MuteMusic()
+        public void MuteMusic(bool mute)
         {
-            var isMuted = PlayerPrefs.GetInt("MusicMuted") == 1;
-
             foreach (var musicAudioSource in _activeMusics.Values)
             {
-                musicAudioSource.mute = isMuted;
+                musicAudioSource.mute = mute;
             }
 
-            PlayerPrefs.SetInt("MusicMuted", isMuted ? 0 : 1);
-
-            return isMuted;
+            PlayerPrefs.SetInt("MusicMuted", mute ? 0 : 1);
         }
 
-        public bool MuteSFX()
+        public void MuteSFX(bool mute)
         {
-            var isMuted = PlayerPrefs.GetInt("SFXMuted") == 1;
-
             foreach (var sfxAudioSource in GetSfxAudioSources())
             {
-                sfxAudioSource.mute = isMuted;
+                sfxAudioSource.mute = mute;
             }
 
-            PlayerPrefs.SetInt("SFXMuted", isMuted ? 0 : 1);
-
-            return isMuted;
+            PlayerPrefs.SetInt("SFXMuted", mute ? 1 : 0);
         }
 
         public void ClearAudio()
