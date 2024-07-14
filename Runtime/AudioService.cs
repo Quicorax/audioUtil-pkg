@@ -21,12 +21,12 @@ namespace Services.Runtime.AudioService
         public void StopMusic(string musicKey, float fadeTime = 0, Action onComplete = null) => IsReady(()=> _audioNest.StopMusic(musicKey, fadeTime, onComplete));
         public void TransitionMusic(string fromMusicKey, string toMusicKey, float fadeTime = 0) => IsReady(()=> _audioNest.StopMusic(fromMusicKey, fadeTime, () => PlayMusic(toMusicKey)));
         public void StopAllMusics(float fadeTime) => IsReady(()=> _audioNest.StopAllMusics(fadeTime));
-        public void AddMusicVolume(float finalVolume) => IsReady(()=> _audioNest.SetMusicVolume(finalVolume));
-        public void AddSFXVolume(float finalVolume) => IsReady(()=> _audioNest.SetSFXVolume(finalVolume));
+        public void SetMusicVolume(float finalVolume) => IsReady(()=> _audioNest.SetMusicVolume(finalVolume));
+        public void SetSFXVolume(float finalVolume) => IsReady(()=> _audioNest.SetSFXVolume(finalVolume));
         public void ClearAudio() => IsReady(()=> _audioNest.ClearAudio());
-        public bool MuteMaster() => IsReady(() => _audioNest.Volume.MuteMaster());
-        public bool MuteMusic() => IsReady(() => _audioNest.Volume.MuteMusic());
-        public bool MuteSFX() => IsReady(() => _audioNest.Volume.MuteSFX());
+        public bool MuteMaster() => IsReady(() => _audioNest.Mixer.MuteMaster());
+        public bool MuteMusic() => IsReady(() => _audioNest.Mixer.MuteMusic());
+        public bool MuteSFX() => IsReady(() => _audioNest.Mixer.MuteSFX());
     
         private void SetDependencies(ResourceRequest asset)
         {

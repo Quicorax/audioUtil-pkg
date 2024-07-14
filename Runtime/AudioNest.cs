@@ -11,7 +11,7 @@ namespace Services.Runtime.AudioService
     {
         private const int MaxAudioSources = 100;
 
-        public VolumeManager Volume;
+        public MixerManager Mixer;
 
         private AudioDefinitions _audioDefinitions;
         private AudioMixerGroup _musicMixer;
@@ -24,7 +24,7 @@ namespace Services.Runtime.AudioService
 
         public AudioNest Initialize(AudioDependencies data)
         {
-            Volume = new VolumeManager(data.AudioMixer);
+            Mixer = new MixerManager(data.AudioMixer);
             _musicMixer = data.MusicMixer;
             _sfxMixer = data.SFXMixer;
             _audioDefinitions = data.AudioDefinitions;
@@ -32,7 +32,32 @@ namespace Services.Runtime.AudioService
             _audioDefinitions.Initialize();
             gameObject.name = "AudioManager";
 
+            SetInitialVolume();
+
             return this;
+        }
+
+        private void SetInitialVolume()
+        {
+            if (PlayerPrefs.GetInt("InitialSFXVolumeSet") == 0)
+            {
+                PlayerPrefs.SetInt("InitialSFXVolumeSet", 1);
+                SetSFXVolume(1f);
+            }
+            else
+            {
+                SetSFXVolume(PlayerPrefs.GetFloat("SFXVolume"));
+            }
+
+            if (PlayerPrefs.GetInt("InitialMusicVolumeSet") == 0)
+            {
+                PlayerPrefs.SetInt("InitialMusicVolumeSet", 1);
+                SetMusicVolume(1f);
+            }
+            else
+            {
+                SetSFXVolume(PlayerPrefs.GetFloat("MusicVolume"));
+            }
         }
 
         public void PlaySFX(string clipKey)
@@ -43,7 +68,7 @@ namespace Services.Runtime.AudioService
             }
 
             var audioSource = SetUpAudioSource(false, clipKey, _sfxMixer);
-            
+
             audioSource.volume = PlayerPrefs.GetFloat("SFXVolume");
             audioSource.Play();
         }
@@ -74,7 +99,7 @@ namespace Services.Runtime.AudioService
             {
                 sfxAudioSource.volume = volume;
             }
-            
+
             PlayerPrefs.SetFloat("SFXVolume", volume);
         }
 
@@ -84,7 +109,7 @@ namespace Services.Runtime.AudioService
             {
                 musicAudioSource.volume = volume;
             }
-            
+
             PlayerPrefs.SetFloat("MusicVolume", volume);
         }
 
@@ -196,7 +221,7 @@ namespace Services.Runtime.AudioService
         }
 
         private void Awake() => DontDestroyOnLoad(gameObject);
-        private void Start() => Volume.ConfigureInitialVolume();
+        private void Start() => Mixer.ConfigureInitialVolume();
         private void OnDestroy() => _fadeTween.Kill();
     }
 }
