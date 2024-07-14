@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Services.Runtime.AudioService
 {
-    [CreateAssetMenu(menuName = "Quicorax/AudioUtil/HardAudioDefinitions", fileName = "Hard Audio Definitions")]
+    [CreateAssetMenu(menuName = "Quicorax/AudioUtil/AudioDefinitions", fileName = "AudioDefinitions")]
     public class AudioDefinitions : ScriptableObject
     {
         [Serializable]

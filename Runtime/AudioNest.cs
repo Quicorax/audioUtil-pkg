@@ -11,53 +11,21 @@ namespace Services.Runtime.AudioService
     {
         private const int MaxAudioSources = 100;
 
-        public MixerManager Mixer;
-
         private AudioDefinitions _audioDefinitions;
-        private AudioMixerGroup _musicMixer;
-        private AudioMixerGroup _sfxMixer;
 
         private readonly Dictionary<string, AudioSource> _activeMusics = new();
 
         private int _instancedAudioSources;
         private Tween _fadeTween;
 
-        public AudioNest Initialize(AudioDependencies data)
+        public AudioNest Initialize(AudioDefinitions audioDefinitions)
         {
-            Mixer = new MixerManager(data.AudioMixer);
-            _musicMixer = data.MusicMixer;
-            _sfxMixer = data.SFXMixer;
-            _audioDefinitions = data.AudioDefinitions;
+            _audioDefinitions = audioDefinitions;
 
             _audioDefinitions.Initialize();
             gameObject.name = "AudioManager";
 
-            SetInitialVolume();
-
             return this;
-        }
-
-        private void SetInitialVolume()
-        {
-            if (PlayerPrefs.GetInt("InitialSFXVolumeSet") == 0)
-            {
-                PlayerPrefs.SetInt("InitialSFXVolumeSet", 1);
-                SetSFXVolume(1f);
-            }
-            else
-            {
-                SetSFXVolume(PlayerPrefs.GetFloat("SFXVolume"));
-            }
-
-            if (PlayerPrefs.GetInt("InitialMusicVolumeSet") == 0)
-            {
-                PlayerPrefs.SetInt("InitialMusicVolumeSet", 1);
-                SetMusicVolume(1f);
-            }
-            else
-            {
-                SetSFXVolume(PlayerPrefs.GetFloat("MusicVolume"));
-            }
         }
 
         public void PlaySFX(string clipKey)
@@ -67,7 +35,7 @@ namespace Services.Runtime.AudioService
                 return;
             }
 
-            var audioSource = SetUpAudioSource(false, clipKey, _sfxMixer);
+            var audioSource = SetUpAudioSource(false, clipKey);
 
             audioSource.volume = PlayerPrefs.GetFloat("SFXVolume");
             audioSource.Play();
@@ -80,7 +48,7 @@ namespace Services.Runtime.AudioService
                 return;
             }
 
-            var audioSource = SetUpAudioSource(true, clipKey, _musicMixer);
+            var audioSource = SetUpAudioSource(true, clipKey);
 
             if (audioSource is null)
             {
@@ -95,7 +63,7 @@ namespace Services.Runtime.AudioService
 
         public void SetSFXVolume(float volume)
         {
-            foreach (var sfxAudioSource in transform.GetComponentsInChildren<AudioSource>().Where(x => !x.loop))
+            foreach (var sfxAudioSource in GetSfxAudioSources())
             {
                 sfxAudioSource.volume = volume;
             }
@@ -145,6 +113,34 @@ namespace Services.Runtime.AudioService
             }
         }
 
+        public bool MuteMusic()
+        {
+            var isMuted = PlayerPrefs.GetInt("MusicMuted") == 1;
+
+            foreach (var musicAudioSource in _activeMusics.Values)
+            {
+                musicAudioSource.mute = isMuted;
+            }
+
+            PlayerPrefs.SetInt("MusicMuted", isMuted ? 0 : 1);
+
+            return isMuted;
+        }
+
+        public bool MuteSFX()
+        {
+            var isMuted = PlayerPrefs.GetInt("SFXMuted") == 1;
+
+            foreach (var sfxAudioSource in GetSfxAudioSources())
+            {
+                sfxAudioSource.mute = isMuted;
+            }
+
+            PlayerPrefs.SetInt("SFXMuted", isMuted ? 0 : 1);
+
+            return isMuted;
+        }
+
         public void ClearAudio()
         {
             _fadeTween?.Kill();
@@ -158,7 +154,7 @@ namespace Services.Runtime.AudioService
             _instancedAudioSources = 0;
         }
 
-        private AudioSource SetUpAudioSource(bool loop, string clipKey, AudioMixerGroup mixer)
+        private AudioSource SetUpAudioSource(bool loop, string clipKey)
         {
             var audioSource = transform.GetComponentsInChildren<AudioSource>()
                 .FirstOrDefault(source => !source.isPlaying) ?? CreateNewAudioSourceChildren();
@@ -167,7 +163,6 @@ namespace Services.Runtime.AudioService
             {
                 audioSource.loop = loop;
                 audioSource.clip = _audioDefinitions.SerializedAudios[clipKey];
-                audioSource.outputAudioMixerGroup = mixer;
             }
 
             return audioSource;
@@ -220,8 +215,36 @@ namespace Services.Runtime.AudioService
             return true;
         }
 
+        private void SetInitialVolume()
+        {
+            if (PlayerPrefs.GetInt("InitialSFXVolumeSet") == 0)
+            {
+                PlayerPrefs.SetInt("InitialSFXVolumeSet", 1);
+                SetSFXVolume(0.5f);
+            }
+            else
+            {
+                SetSFXVolume(PlayerPrefs.GetFloat("SFXVolume"));
+            }
+
+            if (PlayerPrefs.GetInt("InitialMusicVolumeSet") == 0)
+            {
+                PlayerPrefs.SetInt("InitialMusicVolumeSet", 1);
+                SetMusicVolume(0.5f);
+            }
+            else
+            {
+                SetSFXVolume(PlayerPrefs.GetFloat("MusicVolume"));
+            }
+        }
+
+        private IEnumerable<AudioSource> GetSfxAudioSources()
+        {
+            return transform.GetComponentsInChildren<AudioSource>().Where(x => !x.loop);
+        }
+
         private void Awake() => DontDestroyOnLoad(gameObject);
-        private void Start() => Mixer.ConfigureInitialVolume();
+        private void Start() => SetInitialVolume();
         private void OnDestroy() => _fadeTween.Kill();
     }
 }

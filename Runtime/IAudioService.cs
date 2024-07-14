@@ -11,7 +11,6 @@ namespace Services.Runtime.AudioService
         void StopAllMusics(float fadeTime);
         void SetMusicVolume(float finalVolume);
         void SetSFXVolume(float finalVolume);
-        bool MuteMaster();
         bool MuteMusic();
         bool MuteSFX();
         void ClearAudio();

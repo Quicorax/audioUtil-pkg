@@ -12,7 +12,7 @@ namespace Services.Runtime.AudioService
         {
             _audioNest = new GameObject().AddComponent<AudioNest>();
     
-            var dependencies = Resources.LoadAsync("Audio/AudioDependencies");
+            var dependencies = Resources.LoadAsync("Audio/AudioDefinitions");
             dependencies.completed += _ => SetDependencies(dependencies);
         }
     
@@ -24,18 +24,17 @@ namespace Services.Runtime.AudioService
         public void SetMusicVolume(float finalVolume) => IsReady(()=> _audioNest.SetMusicVolume(finalVolume));
         public void SetSFXVolume(float finalVolume) => IsReady(()=> _audioNest.SetSFXVolume(finalVolume));
         public void ClearAudio() => IsReady(()=> _audioNest.ClearAudio());
-        public bool MuteMaster() => IsReady(() => _audioNest.Mixer.MuteMaster());
-        public bool MuteMusic() => IsReady(() => _audioNest.Mixer.MuteMusic());
-        public bool MuteSFX() => IsReady(() => _audioNest.Mixer.MuteSFX());
+        public bool MuteMusic() => IsReady(() => _audioNest.MuteMusic());
+        public bool MuteSFX() => IsReady(() => _audioNest.MuteSFX());
     
         private void SetDependencies(ResourceRequest asset)
         {
             if (asset == null)
             {
-                Debug.LogError("No Audio dependencies defined in the Resources folder!");
+                Debug.LogError("No AudioDefinitions defined in the Resources folder!");
             }
     
-            _audioNest.Initialize(asset?.asset as AudioDependencies);
+            _audioNest.Initialize(asset?.asset as AudioDefinitions);
             _isReady = true;
         }
     
