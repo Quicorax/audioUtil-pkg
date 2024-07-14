@@ -119,26 +119,6 @@ namespace Services.Runtime.AudioService
             }
         }
 
-        public void MuteMusic(bool mute)
-        {
-            foreach (var musicAudioSource in _activeMusics.Values)
-            {
-                musicAudioSource.mute = mute;
-            }
-
-            PlayerPrefs.SetInt("MusicMuted", mute ? 1 : 0);
-        }
-
-        public void MuteSFX(bool mute)
-        {
-            foreach (var sfxAudioSource in GetSfxAudioSources())
-            {
-                sfxAudioSource.mute = mute;
-            }
-
-            PlayerPrefs.SetInt("SFXMuted", mute ? 1 : 0);
-        }
-
         public bool ToggleMuteMusic()
         {
             _isMusicMuted = !_isMusicMuted;
@@ -228,6 +208,26 @@ namespace Services.Runtime.AudioService
 
             Debug.LogError($"Audio with key {clipKey} is already been played in loop mode");
             return true;
+        }
+
+        private void MuteMusic(bool mute)
+        {
+            foreach (var musicAudioSource in _activeMusics.Values)
+            {
+                musicAudioSource.mute = mute;
+            }
+
+            PlayerPrefs.SetInt("MusicMuted", mute ? 1 : 0);
+        }
+
+        private void MuteSFX(bool mute)
+        {
+            foreach (var sfxAudioSource in GetSfxAudioSources())
+            {
+                sfxAudioSource.mute = mute;
+            }
+
+            PlayerPrefs.SetInt("SFXMuted", mute ? 1 : 0);
         }
 
         private void SetInitialState()
