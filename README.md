@@ -10,9 +10,7 @@ Audio management utility for Unity.
 
 ## SetUp
 Generate a new "HardAudioDefinitions":
-- Inside any Assets folder. Left mouse click -> Create -> Quicorax -> AudioUtil -> HardAudioDefinitions.
-
-Set the reference of the newly created HardAudioDefinitions to the previously added AudioInitializer.
+- Inside RESOURCES folder. Left mouse click -> Create -> Quicorax -> AudioUtil -> HardAudioDefinitions.
 
 Fill the HardAudioDefinitions with your audio clips and their associated keys.
 
