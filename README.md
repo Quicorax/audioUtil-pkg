@@ -17,24 +17,8 @@ Set the reference of the newly created HardAudioDefinitions to the previously ad
 Fill the HardAudioDefinitions with your audio clips and their associated keys.
 
 ## Usage
-All the package calls are accessed by calling the "IAudioPlayer" interface.
+All the package calls are accessed by calling the "IAudioService" interface.
 
-There are the following calls:
-```
-void PlaySFX(string sfxKey);
-void PlayMusic(string musicKey);
-void StopMusic(string musicKey, float fadeTime = 0, Action onComplete = null);
-void TransitionMusic(string fromMusicKey, string toMusicKey, float fadeTime = 0);
-void StopAllMusics(float fadeTime);
-void AddMasterVolume(float additiveValue);
-void AddMusicVolume(float additiveValue);
-void AddSFXVolume(float additiveValue);
-
-bool MuteMaster();
-bool MuteMusic();
-bool MuteSFX();
-void ClearAudio();
-```
 ## Example
 ``` 
 _audioService.TransitionMusic("CaveMusic", "CaveBossMusic", 2);
