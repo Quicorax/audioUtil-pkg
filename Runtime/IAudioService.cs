@@ -6,6 +6,8 @@ namespace Services.Runtime.AudioService
     {
         void PlaySFX(string sfxKey);
         void PlayMusic(string musicKey);
+        void PlayMusicWithIntro(string introKey, string musicKey);
+        void StopMusicWithIntro(string introKey, string musicKey, float fadeTime = 0, Action onComplete = null);
         void StopMusic(string musicKey, float fadeTime = 0, Action onComplete = null);
         void TransitionMusic(string fromMusicKey, string toMusicKey, float fadeTime = 0);
         void StopAllMusics(float fadeTime);

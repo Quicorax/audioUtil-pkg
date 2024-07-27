@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using DG.Tweening;
@@ -45,14 +46,16 @@ namespace Services.Runtime.AudioService
             audioSource.Play();
         }
 
-        public void PlayMusic(string clipKey)
+        public void PlayMusic(string clipKey, out AudioSource audioSource)
         {
+            audioSource = null;
+
             if (ClipNotFound(clipKey) || MusicClipAlreadyPlaying(clipKey))
             {
                 return;
             }
 
-            var audioSource = SetUpAudioSource(true, clipKey);
+            audioSource = SetUpAudioSource(true, clipKey);
 
             if (audioSource is null)
             {
@@ -65,6 +68,31 @@ namespace Services.Runtime.AudioService
             audioSource.mute = PlayerPrefs.GetInt("MusicMuted") == 1;
 
             audioSource.Play();
+        }
+
+        public void PlayMusicWithIntro(string introClipKey, string musicClipKey)
+        {
+            if (ClipNotFound(introClipKey) || ClipNotFound(musicClipKey))
+            {
+                return;
+            }
+
+            PlayMusic(introClipKey, out var audioSource);
+            if (audioSource is null)
+            {
+                return;
+            }
+
+            audioSource.loop = false;
+            StartCoroutine(QueueMusic(audioSource, musicClipKey));
+        }
+
+        public void StopMusicWithIntro(string introClipKey, string musicClipKey, float fadeTime = 0,
+            Action onComplete = null)
+        {
+            StopAllCoroutines();
+            StopMusic(introClipKey, fadeTime);
+            StopMusic(musicClipKey, fadeTime, onComplete);
         }
 
         public void SetSFXVolume(float volume)
@@ -99,6 +127,7 @@ namespace Services.Runtime.AudioService
         {
             if (!_activeMusics.ContainsKey(clipKey))
             {
+                onComplete?.Invoke();
                 return;
             }
 
@@ -137,6 +166,8 @@ namespace Services.Runtime.AudioService
 
         public void ClearAudio()
         {
+            StopAllCoroutines();
+
             _fadeTween?.Kill();
             _activeMusics.Clear();
 
@@ -206,7 +237,7 @@ namespace Services.Runtime.AudioService
                 return false;
             }
 
-            Debug.LogError($"Audio with key {clipKey} is already been played in loop mode");
+            Debug.LogWarning($"Audio with key {clipKey} is already been played in loop mode");
             return true;
         }
 
@@ -261,6 +292,19 @@ namespace Services.Runtime.AudioService
         private IEnumerable<AudioSource> GetSfxAudioSources()
         {
             return transform.GetComponentsInChildren<AudioSource>().Where(x => !x.loop);
+        }
+
+        private IEnumerator QueueMusic(AudioSource audioSource, string musicClipKey)
+        {
+            while (audioSource.isPlaying)
+            {
+                yield return null;
+            }
+
+            StopMusic(audioSource.clip.name, onComplete: () =>
+            {
+                PlayMusic(musicClipKey, out _);
+            });
         }
 
         private void Awake() => DontDestroyOnLoad(gameObject);

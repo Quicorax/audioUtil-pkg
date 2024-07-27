@@ -17,7 +17,9 @@ namespace Services.Runtime.AudioService
         }
     
         public void PlaySFX(string sfxKey) => IsReady(()=> _audioNest.PlaySFX(sfxKey));
-        public void PlayMusic(string musicKey) => IsReady(()=> _audioNest.PlayMusic(musicKey));
+        public void PlayMusic(string musicKey) => IsReady(()=> _audioNest.PlayMusic(musicKey, out _));
+        public void PlayMusicWithIntro(string introKey, string musicKey) => IsReady(()=> _audioNest.PlayMusicWithIntro(introKey, musicKey));
+        public void StopMusicWithIntro(string introKey, string musicKey, float fadeTime = 0, Action onComplete = null) => IsReady(()=> _audioNest.StopMusicWithIntro(introKey, musicKey, fadeTime, onComplete));
         public void StopMusic(string musicKey, float fadeTime = 0, Action onComplete = null) => IsReady(()=> _audioNest.StopMusic(musicKey, fadeTime, onComplete));
         public void TransitionMusic(string fromMusicKey, string toMusicKey, float fadeTime = 0) => IsReady(()=> _audioNest.StopMusic(fromMusicKey, fadeTime, () => PlayMusic(toMusicKey)));
         public void StopAllMusics(float fadeTime) => IsReady(()=> _audioNest.StopAllMusics(fadeTime));
