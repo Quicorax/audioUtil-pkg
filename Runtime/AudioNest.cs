@@ -254,7 +254,7 @@ namespace Services.Runtime.AudioService
             }
             else
             {
-                SetSFXVolume(PlayerPrefs.GetFloat("MusicVolume"));
+                SetMusicVolume(PlayerPrefs.GetFloat("MusicVolume"));
             }
         }
 
