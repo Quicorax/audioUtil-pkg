@@ -4,8 +4,9 @@ using System.Collections.Generic;
 using System.Linq;
 using DG.Tweening;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
-namespace Services.Runtime.AudioService
+namespace es.quicorax.audioUtil.Runtime
 {
     public class AudioNest : MonoBehaviour
     {
@@ -20,12 +21,13 @@ namespace Services.Runtime.AudioService
 
         private bool _isMusicMuted;
         private bool _isSfxMuted;
+        
+        private int _currentProgressiveAudioClipIndex = -1;
 
         public AudioNest Initialize(AudioDefinitions audioDefinitions)
         {
             _audioDefinitions = audioDefinitions;
-
-            _audioDefinitions.Initialize();
+            
             gameObject.name = "AudioManager";
 
             return this;
@@ -125,13 +127,11 @@ namespace Services.Runtime.AudioService
 
         public void StopMusic(string clipKey, float fadeTime = 0, Action onComplete = null)
         {
-            if (!_activeMusics.ContainsKey(clipKey))
+            if (!_activeMusics.TryGetValue(clipKey, out var audioSource))
             {
                 onComplete?.Invoke();
                 return;
             }
-
-            var audioSource = _activeMusics[clipKey];
 
             if (fadeTime > 0)
             {
@@ -179,7 +179,7 @@ namespace Services.Runtime.AudioService
             _instancedAudioSources = 0;
         }
 
-        private AudioSource SetUpAudioSource(bool loop, string clipKey)
+        private AudioSource SetUpAudioSource(bool loop, string audioKey)
         {
             var audioSource = transform.GetComponentsInChildren<AudioSource>()
                 .FirstOrDefault(source => !source.isPlaying) ?? CreateNewAudioSourceChildren();
@@ -187,12 +187,39 @@ namespace Services.Runtime.AudioService
             if (audioSource is not null)
             {
                 audioSource.loop = loop;
-                audioSource.clip = _audioDefinitions.SerializedAudios[clipKey];
+                
+                var data = _audioDefinitions.AudioData.Find(audioDefinition => audioDefinition.AudioKey == audioKey);
+                audioSource.clip = GetClip(data);
             }
 
             return audioSource;
         }
 
+        private AudioClip GetClip(AudioDefinition audioDefinition)
+        {
+            switch (audioDefinition.AudioMode)
+            {
+                case AudioMode.Random:
+                    return audioDefinition.MultipleAudioFiles[Random.Range(0, audioDefinition.MultipleAudioFiles.Length)];
+                case AudioMode.Progressive:
+                    CancelInvoke();
+                    _currentProgressiveAudioClipIndex++;
+                    if (_currentProgressiveAudioClipIndex >= audioDefinition.MultipleAudioFiles.Length)
+                    {
+                        _currentProgressiveAudioClipIndex = 0;
+                    }
+                    Invoke(nameof(ForgetProgressiveAudioClipProgression), audioDefinition.ForgetProgression);
+                    return audioDefinition.MultipleAudioFiles[_currentProgressiveAudioClipIndex];
+                default:
+                    return audioDefinition.SingleAudioFile;
+            }
+        }
+
+        private void ForgetProgressiveAudioClipProgression()
+        {
+            _currentProgressiveAudioClipIndex = -1;
+        }
+        
         private AudioSource CreateNewAudioSourceChildren()
         {
             if (_instancedAudioSources >= MaxAudioSources)
@@ -221,13 +248,13 @@ namespace Services.Runtime.AudioService
 
         private bool ClipNotFound(string clipKey)
         {
-            if (!_audioDefinitions.SerializedAudios.ContainsKey(clipKey))
+            if (_audioDefinitions.AudioData.Any(definition => definition.AudioKey == clipKey))
             {
-                Debug.LogError($"Audio with key {clipKey} is not present in the AudioDefinitions");
-                return true;
+                return false;
             }
 
-            return false;
+            Debug.LogError($"quicorax.audioutil: Audio Definition with key: {clipKey} not found");   
+            return true;
         }
 
         private bool MusicClipAlreadyPlaying(string clipKey)
@@ -237,7 +264,7 @@ namespace Services.Runtime.AudioService
                 return false;
             }
 
-            Debug.LogWarning($"Audio with key {clipKey} is already been played in loop mode");
+            Debug.LogWarning($"quicorax.audioutil: Audio with key {clipKey} is already been played in loop mode");
             return true;
         }
 

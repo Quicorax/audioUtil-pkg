@@ -1,6 +1,6 @@
 using System;
 
-namespace Services.Runtime.AudioService
+namespace es.quicorax.audioUtil.Runtime
 {
     public interface IAudioService
     {

@@ -2,27 +2,22 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Services.Runtime.AudioService
+namespace es.quicorax.audioUtil.Runtime
 {
     [CreateAssetMenu(menuName = "Quicorax/AudioUtil/AudioDefinitions", fileName = "AudioDefinitions")]
     public class AudioDefinitions : ScriptableObject
     {
-        [Serializable]
-        public class AudioDefinition
-        {
-            public string AudioKey;
-            public AudioClip AudioFile;
-        }
+        [SerializeField] private List<AudioDefinition> _audioData;
+        public List<AudioDefinition> AudioData => _audioData;
+    }
 
-        public List<AudioDefinition> Audios = new();
-        public readonly Dictionary<string, AudioClip> SerializedAudios = new();
-
-        public void Initialize()
-        {
-            foreach (var audioDefinition in Audios)
-            {
-                SerializedAudios.Add(audioDefinition.AudioKey, audioDefinition.AudioFile);
-            }
-        }
+    [Serializable]
+    public class AudioDefinition
+    {
+        public string AudioKey;
+        public AudioMode AudioMode;
+        public AudioClip SingleAudioFile;
+        public AudioClip[] MultipleAudioFiles;
+        public float ForgetProgression;
     }
 }

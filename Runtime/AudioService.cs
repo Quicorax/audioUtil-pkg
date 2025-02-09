@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace Services.Runtime.AudioService
+namespace es.quicorax.audioUtil.Runtime
 {
     public class AudioService : IAudioService
     {
