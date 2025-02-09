@@ -1,6 +1,6 @@
 {
   "name": "es.quicorax.audioutil",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "displayName": "Quicorax_Audio",
   "description": "Audio management Utility tools",
   "unity": "2021.3",
