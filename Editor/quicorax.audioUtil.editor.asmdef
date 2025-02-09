@@ -1,4 +1,18 @@
 {
-	"name": "quicorax.audioUtil.editor",
-	"references":[ "GUID:bccb0c4dbe64827468a5a4f245440a09" ]
+    "name": "quicorax.audioUtil.editor",
+    "rootNamespace": "",
+    "references": [
+        "quicorax.audioUtil.runtime"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
 }
